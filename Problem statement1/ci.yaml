@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t wisecow-app .
+
+    - name: Push Docker image
+      run: docker push <your-dockerhub-username>/wisecow-app
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
+
